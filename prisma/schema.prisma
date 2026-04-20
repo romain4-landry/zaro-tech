@@ -1,0 +1,134 @@
+// Configuration de Prisma — schéma de la base de données
+// Ce fichier définit toutes les tables de la base de données
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+}
+// Table des utilisateurs
+model User {
+  id            String         @id @default(cuid())
+  name          String?
+  email         String         @unique
+  password      String?
+  role          Role           @default(CLIENT)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  projects      Project[]
+  devis         Devis[]
+  conversations Conversation[]
+}
+
+// Rôles possibles pour un utilisateur
+enum Role {
+  ADMIN
+  CLIENT
+  TECH
+}
+
+// Table des projets
+model Project {
+  id          String        @id @default(cuid())
+  title       String
+  description String?
+  status      ProjectStatus @default(NOUVEAU)
+  progress    Int           @default(0)
+  startDate   DateTime?
+  endDate     DateTime?
+  userId      String
+  user        User          @relation(fields: [userId], references: [id])
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+// Statuts possibles pour un projet
+enum ProjectStatus {
+  NOUVEAU
+  EN_COURS
+  EN_REVISION
+  LIVRE
+  CLOTURE
+  ANNULE
+}
+
+// Table des demandes de devis
+model Devis {
+  id        String      @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  service   String
+  domain    String
+  budget    String?
+  deadline  String?
+  message   String?
+  status    DevisStatus @default(EN_ATTENTE)
+  userId    String?
+  user      User?       @relation(fields: [userId], references: [id])
+  createdAt DateTime    @default(now())
+}
+
+// Statuts possibles pour un devis
+enum DevisStatus {
+  EN_ATTENTE
+  EN_TRAITEMENT
+  ACCEPTE
+  REFUSE
+}
+
+// Table des chatbots
+model Chatbot {
+  id            String         @id @default(cuid())
+  name          String
+  domain        ChatbotDomain
+  systemPrompt  String
+  active        Boolean        @default(true)
+  conversations Conversation[]
+}
+
+// Domaines possibles pour un chatbot
+enum ChatbotDomain {
+  AGRICULTURE
+  FOOTBALL
+  GENERAL
+}
+
+// Table des conversations
+model Conversation {
+  id        String    @id @default(cuid())
+  sessionId String    @unique
+  status    String    @default("active")
+  startedAt DateTime  @default(now())
+  userId    String?
+  user      User?     @relation(fields: [userId], references: [id])
+  chatbotId String
+  chatbot   Chatbot   @relation(fields: [chatbotId], references: [id])
+  messages  Message[]
+}
+
+// Table des messages
+model Message {
+  id             String       @id @default(cuid())
+  content        String
+  author         String
+  timestamp      DateTime     @default(now())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+}
+
+// Table du portfolio
+model Portfolio {
+  id           String   @id @default(cuid())
+  title        String
+  description  String?
+  image        String?
+  domain       String
+  technologies String[]
+  url          String?
+  date         DateTime
+  featured     Boolean  @default(false)
+}
