@@ -1,4 +1,3 @@
-// Page admin — accès réservé au rôle ADMIN
 "use client";
 
 import { useSession, signOut } from "next-auth/react";
@@ -6,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
-// Interface pour les devis
 interface Devis {
   id: string;
   name: string;
@@ -27,21 +25,16 @@ export default function AdminPage() {
   const [devis, setDevis] = useState<Devis[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("devis");
+  const [updating, setUpdating] = useState<string | null>(null);
 
-  // Rediriger si pas connecté ou pas admin
   useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/login");
-    }
+    if (status === "unauthenticated") router.push("/login");
     if (status === "authenticated") {
       const role = (session?.user as { role?: string })?.role;
-      if (role !== "ADMIN") {
-        router.push("/dashboard");
-      }
+      if (role !== "ADMIN") router.push("/dashboard");
     }
   }, [status, session, router]);
 
-  // Charger les devis
   useEffect(() => {
     if (status === "authenticated") {
       fetch("/api/admin/devis")
@@ -54,6 +47,29 @@ export default function AdminPage() {
     }
   }, [status]);
 
+  // Fonction pour changer le statut d'un devis
+  async function updateStatus(id: string, newStatus: string) {
+    setUpdating(id);
+    try {
+      const res = await fetch(`/api/admin/devis/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      if (res.ok) {
+        // Mettre à jour localement sans recharger la page
+        setDevis((prev) =>
+          prev.map((d) => (d.id === id ? { ...d, status: newStatus } : d))
+        );
+      }
+    } catch (error) {
+      console.error("Erreur mise à jour:", error);
+    } finally {
+      setUpdating(null);
+    }
+  }
+
   if (status === "loading") {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -64,9 +80,8 @@ export default function AdminPage() {
 
   if (!session) return null;
 
-  // Couleur selon statut devis
-  function getStatusStyle(status: string) {
-    switch (status) {
+  function getStatusStyle(s: string) {
+    switch (s) {
       case "EN_ATTENTE": return "bg-amber-50 text-amber-700";
       case "EN_TRAITEMENT": return "bg-blue-50 text-blue-700";
       case "ACCEPTE": return "bg-[#E1F5EE] text-[#0F6E56]";
@@ -75,20 +90,21 @@ export default function AdminPage() {
     }
   }
 
-  function getStatusLabel(status: string) {
-    switch (status) {
+  function getStatusLabel(s: string) {
+    switch (s) {
       case "EN_ATTENTE": return "En attente";
       case "EN_TRAITEMENT": return "En traitement";
       case "ACCEPTE": return "Accepté";
       case "REFUSE": return "Refusé";
-      default: return status;
+      default: return s;
     }
   }
+
+  const statuses = ["EN_ATTENTE", "EN_TRAITEMENT", "ACCEPTE", "REFUSE"];
 
   return (
     <div className="min-h-screen bg-gray-50">
 
-      {/* Navbar admin */}
       <nav className="bg-white border-b border-gray-100 px-6 py-4">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -113,7 +129,6 @@ export default function AdminPage() {
 
       <main className="max-w-6xl mx-auto px-6 py-10">
 
-        {/* Titre */}
         <div className="mb-8">
           <h1 className="text-2xl font-medium text-gray-900 mb-1">
             Tableau de bord admin
@@ -123,7 +138,6 @@ export default function AdminPage() {
           </p>
         </div>
 
-        {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           {[
             { label: "Total devis", value: devis.length },
@@ -138,13 +152,12 @@ export default function AdminPage() {
           ))}
         </div>
 
-        {/* Tabs */}
         <div className="flex gap-2 mb-6">
           {["devis", "clients"].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`text-sm px-4 py-2 rounded-lg transition-colors capitalize ${
+              className={`text-sm px-4 py-2 rounded-lg transition-colors ${
                 activeTab === tab
                   ? "bg-[#1D9E75] text-white"
                   : "bg-white text-gray-500 border border-gray-200 hover:bg-gray-50"
@@ -155,7 +168,6 @@ export default function AdminPage() {
           ))}
         </div>
 
-        {/* Liste des devis */}
         {activeTab === "devis" && (
           <div className="flex flex-col gap-3">
             {loading ? (
@@ -183,36 +195,44 @@ export default function AdminPage() {
                       })}
                     </p>
                   </div>
-                  <div className="flex flex-wrap gap-2">
-                    <span className="text-xs bg-gray-50 text-gray-600 px-2.5 py-1 rounded-full border border-gray-100">
-                      {d.service}
-                    </span>
-                    <span className="text-xs bg-gray-50 text-gray-600 px-2.5 py-1 rounded-full border border-gray-100">
-                      {d.domain}
-                    </span>
-                    {d.budget && (
-                      <span className="text-xs bg-gray-50 text-gray-600 px-2.5 py-1 rounded-full border border-gray-100">
-                        {d.budget}
-                      </span>
-                    )}
-                    {d.deadline && (
-                      <span className="text-xs bg-gray-50 text-gray-600 px-2.5 py-1 rounded-full border border-gray-100">
-                        {d.deadline}
-                      </span>
-                    )}
+
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    <span className="text-xs bg-gray-50 text-gray-600 px-2.5 py-1 rounded-full border border-gray-100">{d.service}</span>
+                    <span className="text-xs bg-gray-50 text-gray-600 px-2.5 py-1 rounded-full border border-gray-100">{d.domain}</span>
+                    {d.budget && <span className="text-xs bg-gray-50 text-gray-600 px-2.5 py-1 rounded-full border border-gray-100">{d.budget}</span>}
+                    {d.deadline && <span className="text-xs bg-gray-50 text-gray-600 px-2.5 py-1 rounded-full border border-gray-100">{d.deadline}</span>}
                   </div>
+
                   {d.message && (
-                    <p className="text-xs text-gray-500 mt-3 bg-gray-50 px-3 py-2 rounded-lg">
+                    <p className="text-xs text-gray-500 mb-4 bg-gray-50 px-3 py-2 rounded-lg">
                       {d.message}
                     </p>
                   )}
+
+                  {/* Boutons de changement de statut */}
+                  <div className="flex gap-2 flex-wrap pt-3 border-t border-gray-50">
+                    <p className="text-xs text-gray-400 w-full mb-1">Changer le statut :</p>
+                    {statuses.map((s) => (
+                      <button
+                        key={s}
+                        onClick={() => updateStatus(d.id, s)}
+                        disabled={d.status === s || updating === d.id}
+                        className={`text-xs px-3 py-1.5 rounded-lg border transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${
+                          d.status === s
+                            ? `${getStatusStyle(s)} border-transparent font-medium`
+                            : "bg-white text-gray-500 border-gray-200 hover:bg-gray-50"
+                        }`}
+                      >
+                        {updating === d.id ? "..." : getStatusLabel(s)}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               ))
             )}
           </div>
         )}
 
-        {/* Clients */}
         {activeTab === "clients" && (
           <div className="bg-white border border-gray-100 rounded-xl p-8 text-center">
             <p className="text-sm text-gray-400">

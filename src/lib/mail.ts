@@ -92,3 +92,78 @@ export async function sendDevisConfirmation(data: DevisEmailData) {
     `,
   });
 }
+
+// Email de notification au client quand le statut de son devis change
+export async function sendStatusUpdate(data: {
+  name: string;
+  email: string;
+  service: string;
+  status: string;
+}) {
+  const { BrevoClient } = require("@getbrevo/brevo");
+  const brevo = new BrevoClient({ apiKey: process.env.BREVO_API_KEY! });
+
+  // Message selon le statut
+  const messages: Record<string, { subject: string; text: string; color: string }> = {
+    EN_TRAITEMENT: {
+      subject: "Votre devis est en cours de traitement — Zaro Tech",
+      text: "Bonne nouvelle ! Votre demande de devis est maintenant <strong>en cours de traitement</strong>. Notre équipe l'analyse et vous contactera très bientôt.",
+      color: "#185FA5",
+    },
+    ACCEPTE: {
+      subject: "Votre devis a été accepté — Zaro Tech 🎉",
+      text: "Excellente nouvelle ! Votre demande de devis a été <strong>acceptée</strong>. Notre équipe va vous contacter sous peu pour démarrer votre projet.",
+      color: "#1D9E75",
+    },
+    REFUSE: {
+      subject: "Mise à jour de votre demande de devis — Zaro Tech",
+      text: "Nous avons bien examiné votre demande de devis. Malheureusement, nous ne sommes pas en mesure de donner suite à votre demande pour le moment. N'hésitez pas à nous recontacter ultérieurement.",
+      color: "#A32D2D",
+    },
+    EN_ATTENTE: {
+      subject: "Votre devis est en attente — Zaro Tech",
+      text: "Votre demande de devis est actuellement <strong>en attente</strong>. Nous vous tiendrons informé dès qu'elle sera traitée.",
+      color: "#BA7517",
+    },
+  };
+
+  const msg = messages[data.status] || messages.EN_ATTENTE;
+
+  const sendSmtpEmail = new (require("@getbrevo/brevo").BrevoClient)({
+    apiKey: process.env.BREVO_API_KEY!,
+  });
+
+  await brevo.transactionalEmails.sendTransacEmail({
+    subject: msg.subject,
+    sender: { name: "Zaro Tech", email: "zarotech2@gmail.com" },
+    to: [{ email: data.email, name: data.name }],
+    htmlContent: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <div style="background: #1D9E75; padding: 20px; text-align: center;">
+          <h1 style="color: white; margin: 0;">ZaroTech</h1>
+        </div>
+        <div style="padding: 30px;">
+          <h2 style="color: #111;">Bonjour ${data.name},</h2>
+          <p style="color: #555; line-height: 1.6;">
+            Mise à jour concernant votre demande de devis pour <strong>${data.service}</strong> :
+          </p>
+          <div style="background: #f9f9f9; border-left: 4px solid ${msg.color}; padding: 16px; border-radius: 0 8px 8px 0; margin: 20px 0;">
+            <p style="color: #111; margin: 0;">${msg.text}</p>
+          </div>
+          <p style="color: #555; line-height: 1.6;">
+            Pour toute question, répondez à cet email ou contactez-nous sur
+            <a href="mailto:zarotech2@gmail.com" style="color: #1D9E75;">zarotech2@gmail.com</a>
+          </p>
+          <p style="color: #555; margin-top: 20px;">
+            Cordialement,<br/>
+            <strong style="color: #1D9E75;">L'équipe Zaro Tech</strong><br/>
+            Bruxelles · Yaoundé
+          </p>
+        </div>
+        <div style="padding: 20px; text-align: center; background: #f9f9f9; border-top: 1px solid #eee;">
+          <p style="color: #999; font-size: 12px; margin: 0;">© 2025 Zaro Tech — contact@zarotech.be</p>
+        </div>
+      </div>
+    `,
+  });
+}
