@@ -1,4 +1,5 @@
-import { Resend } from "resend";
+// Service d'envoi d'emails avec Brevo
+const { BrevoClient } = require("@getbrevo/brevo");
 
 interface DevisEmailData {
   name: string;
@@ -11,15 +12,22 @@ interface DevisEmailData {
   message?: string;
 }
 
-export async function sendDevisNotification(data: DevisEmailData) {
-  // On initialise Resend ici pour s'assurer que la clé est chargée
-  const resend = new Resend(process.env.RESEND_API_KEY);
+// Initialisation du client Brevo
+function getBrevoClient() {
+  return new BrevoClient({
+    apiKey: process.env.BREVO_API_KEY!,
+  });
+}
 
-  await resend.emails.send({
-    from: "Zaro Tech <onboarding@resend.dev>",
-    to: process.env.MAIL_TO!,
+// Email de notification à l'équipe Zaro Tech
+export async function sendDevisNotification(data: DevisEmailData) {
+  const brevo = getBrevoClient();
+
+  await brevo.transactionalEmails.sendTransacEmail({
     subject: `Nouveau devis — ${data.service} (${data.domain})`,
-    html: `
+    sender: { name: "Zaro Tech", email: "zarotech2@gmail.com" },
+    to: [{ email: process.env.MAIL_TO!, name: "Équipe Zaro Tech" }],
+    htmlContent: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <div style="background: #1D9E75; padding: 20px; text-align: center;">
           <h1 style="color: white; margin: 0;">ZaroTech</h1>
@@ -49,15 +57,15 @@ export async function sendDevisNotification(data: DevisEmailData) {
   });
 }
 
+// Email de confirmation au client
 export async function sendDevisConfirmation(data: DevisEmailData) {
-  // On initialise Resend ici pour s'assurer que la clé est chargée
-  const resend = new Resend(process.env.RESEND_API_KEY);
+  const brevo = getBrevoClient();
 
-  await resend.emails.send({
-    from: "Zaro Tech <onboarding@resend.dev>",
-    to: data.email,
+  await brevo.transactionalEmails.sendTransacEmail({
     subject: "Votre demande de devis a bien été reçue — Zaro Tech",
-    html: `
+    sender: { name: "Zaro Tech", email: "zarotech2@gmail.com" },
+    to: [{ email: data.email, name: data.name }],
+    htmlContent: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <div style="background: #1D9E75; padding: 20px; text-align: center;">
           <h1 style="color: white; margin: 0;">ZaroTech</h1>
