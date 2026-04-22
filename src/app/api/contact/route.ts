@@ -4,9 +4,6 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { sendDevisNotification, sendDevisConfirmation } from "@/lib/mail";
 
-console.log("SMTP_USER:", process.env.SMTP_USER);
-console.log("SMTP_PASS length:", process.env.SMTP_PASS?.length);
-console.log("RESEND_API_KEY:", process.env.RESEND_API_KEY);
 // Schéma de validation
 const devisSchema = z.object({
   name: z.string().min(2, "Nom trop court"),
@@ -23,7 +20,6 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
 
-    // Validation des données
     const result = devisSchema.safeParse(body);
     if (!result.success) {
       return NextResponse.json(
@@ -50,13 +46,11 @@ export async function POST(req: NextRequest) {
 
     console.log("Devis sauvegardé:", devis.id);
 
-    // 2. Envoyer email de notification à l'équipe Zaro Tech
+    // 2. Notification à l'équipe
     await sendDevisNotification(data);
-    console.log("Email de notification envoyé");
 
-    // 3. Envoyer email de confirmation au client
+    // 3. Confirmation au client
     await sendDevisConfirmation(data);
-    console.log("Email de confirmation envoyé au client");
 
     return NextResponse.json({
       success: true,
