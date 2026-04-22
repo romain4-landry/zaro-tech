@@ -83,7 +83,7 @@ export default function AboutPage() {
               livrant des solutions digitales intelligentes, accessibles et durables.
             </p>
             <p className="text-sm text-gray-500 leading-relaxed">
-              On croit que chaque agriculteur camerounais mérite un outil aussi
+              On croit que chaque agriculteur, camerounais mérite un outil aussi
               puissant que celui d&apos;une multinationale. C&apos;est pourquoi on intègre
               l&apos;IA dans des produits simples, utiles et abordables.
             </p>
@@ -142,7 +142,7 @@ export default function AboutPage() {
               <p className="text-sm text-gray-500">Bureau Europe — Marché UE & international</p>
               <a href="mailto:contact@zarotech.be"
                 className="text-sm text-[#1D9E75] mt-2 block hover:text-[#0F6E56] transition-colors">
-                 zarotech@gmail.com
+                 zarotech2@gmail.com
               </a>
             </div>
             {/* Bureau de Yaoundé */}
@@ -152,7 +152,7 @@ export default function AboutPage() {
               <p className="text-sm text-gray-500">Bureau Afrique — Marchés Afrique francophone</p>
               <a href="mailto:contact@zarotech.cm"
                 className="text-sm text-[#1D9E75] mt-2 block hover:text-[#0F6E56] transition-colors">
-                zarotech@gmail.com
+                zarotech2@gmail.com
               </a>
             </div>
           </div>

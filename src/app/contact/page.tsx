@@ -84,6 +84,7 @@ export default function ContactPage() {
                   <option>Chatbot football</option>
                   <option>Chatbot multi-domaine</option>
                   <option>Flyers & print</option>
+                  <option>Analyse de données</option>
                   <option>Maintenance & SEO</option>
                 </select>
               </div>
