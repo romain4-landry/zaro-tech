@@ -1,22 +1,22 @@
 const items = [
   {
     title: "AgroBot Cameroun",
-    desc: "Chatbot agricole · 2024",
+    desc: "Chatbot agricole · 2026",
     bg: "bg-[#E1F5EE]",
   },
   {
     title: "FootStats Africa",
-    desc: "Chatbot football · 2024",
+    desc: "Chatbot football · 2026",
     bg: "bg-purple-50",
   },
   {
     title: "Site vitrine PME",
-    desc: "Web · Bruxelles · 2025",
+    desc: "Web · Bruxelles · 2026",
     bg: "bg-blue-50",
   },
   {
     title: "Flyers campagne",
-    desc: "Print · Yaoundé · 2025",
+    desc: "Print · Yaoundé · 2026",
     bg: "bg-amber-50",
   },
 ];
