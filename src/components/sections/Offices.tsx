@@ -4,14 +4,14 @@ const offices = [
     city: "Bruxelles, Belgique",
     role: "Bureau Europe",
     detail: "Marché UE & international",
-    email: "zarotech@gmail.com",
+    email: "zarotech2@gmail.com",
   },
   {
     flag: "🇨🇲",
     city: "Yaoundé, Cameroun",
     role: "Bureau Afrique centrale",
     detail: "Marchés Afrique francophone",
-    email: "zarotech@gmail.com",
+    email: "zarotech2@gmail.com",
   },
 ];
 

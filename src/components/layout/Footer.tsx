@@ -8,7 +8,7 @@ export default function Footer() {
           Zaro<span className="text-[#1D9E75]">Tech</span>
         </div>
         <p className="text-sm text-gray-400">
-          © 2025 Zaro Tech — Bruxelles · Yaoundé
+          © 2026 Zaro Tech — Bruxelles · Yaoundé
         </p>
         <div className="flex gap-6 text-sm text-gray-400">
           <Link href="/legal" className="hover:text-gray-700">Mentions légales</Link>
