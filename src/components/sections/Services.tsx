@@ -35,6 +35,12 @@ const services = [
     domain: "Tous secteurs",
     color: "bg-blue-50 text-blue-700",
   },
+  {
+  name: "Analyse de données",
+  desc: "Collecte, traitement et visualisation de vos données pour des décisions éclairées. Tableaux de bord, rapports et insights personnalisés.",
+  domain: "Tous secteurs",
+  color: "bg-teal-50 text-teal-700",
+},
 ];
 
 export default function Services() {

@@ -45,6 +45,13 @@ const services = [
     color: "bg-blue-50 text-blue-700",
     details: ["Hébergement", "Mises à jour", "Sauvegardes", "Référencement Google"],
   },
+  {
+  name: "Analyse de données",
+  desc: "Collecte, traitement et visualisation de vos données pour des décisions éclairées. Tableaux de bord, rapports et insights personnalisés.",
+  domain: "Tous secteurs",
+  color: "bg-teal-50 text-teal-700",
+  details: ["Tableaux de bord", "Rapports automatisés", "Visualisation données", "KPI & métriques"],
+},
 ];
 
 export default function ServicesPage() {
