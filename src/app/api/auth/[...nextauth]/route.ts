@@ -24,7 +24,7 @@ const handler = NextAuth({
           {
             id: "1",
             email: "admin@zarotech.be",
-            password: "admin123",
+            password: "ZarotechAdmin123",
             name: "Admin Zaro Tech",
             role: "ADMIN",
           },
