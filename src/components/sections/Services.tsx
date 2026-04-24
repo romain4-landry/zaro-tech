@@ -97,15 +97,14 @@ export default function Services() {
         style={{ backgroundImage: "url('/images/services-bg.jpg')" }}
       />
 
-      {/* Overlay blanc pour garder l'ambiance claire */}
+      {/* Overlay blanc allégé - l'image de fond est bien visible */}
       <div
         className="absolute inset-0"
         style={{
-          background:
-            "linear-gradient(180deg, rgba(248,250,249,0.92) 0%, rgba(238,244,241,0.95) 100%)",
+        background:
+          "linear-gradient(180deg, rgba(248,250,249,0.70) 0%, rgba(238,244,241,0.75) 100%)",
         }}
       />
-
       {/* Grille subtile */}
       <div
         className="absolute inset-0 pointer-events-none"
