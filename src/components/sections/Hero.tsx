@@ -51,8 +51,8 @@ export default function Hero() {
             className="text-gray-100 text-sm md:text-lg leading-relaxed mb-6 md:mb-8 max-w-xl"
             style={{ textShadow: "0 1px 10px rgba(0,0,0,0.8)" }}
           >
-            Zaro Tech conçoit des sites web modernes et des chatbots intelligents
-            pour l&apos;agriculture, le football et bien au-delà — de Bruxelles à Yaoundé.
+            Zaro Tech accompagne entreprises, startups et entrepreneurs avec des sites web modernes
+            et des chatbots intelligents — de Bruxelles à Yaoundé.
           </p>
 
           <div className="flex gap-3 flex-wrap">
